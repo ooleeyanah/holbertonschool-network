@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run this script as root or using sudo."
+  exit 1
+fi
+
+echo -e "PROTO\tLOCAL_ADDRESS\t\tPID\tPROGRAM_NAME"
+echo -e "--------------------------------------------------------"
+
+ss -tulnp | awk 'NR>1 {
+    proto = $1
+    local_addr = $5
+    
+    # Extract PID and Program name from the last column
+    match($0, /users:\(\("([^"]+)",pid=([0-9]+)/, arr)
+    if (arr[1] != "") {
+        prog_name = arr[1]
+        pid = arr[2]
+    } else {
+        prog_name = "Unknown"
+        pid = "-"
+    }
+    
+    printf "%s\t%-23s\t%s\t%s\n", proto, local_addr, pid, prog_name
+}'
