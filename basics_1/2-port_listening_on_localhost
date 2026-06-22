@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# listens to port 98 on localhost
+PORT=${1:-98}
+
+echo "Starting listener on port $PORT yayayay...."
+echo "Smash that [CRTL+C] button to stop/like & subscribe"
+
+while true; do
+    sudo nc -lv -p "$PORT"
+done
